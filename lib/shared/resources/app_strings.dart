@@ -227,12 +227,6 @@ abstract class AppStrings {
   static const String tapToAdd = 'Tap + to add';
   static const String seeAll = 'See All';
   static const String done = 'Done';
-  static const String aiConfiguration = 'AI Configuration';
-  static const String aiConfigurationBody = 'Enter your Gemini API key to enable Study Pack generation and AI extraction features.';
-  static const String geminiApiKey = 'Gemini API Key';
-  static const String geminiApiKeyHint = 'AIzaSy...';
-  static const String saveApiKey = 'Save API Key';
-  static const String apiKeySaved = 'API Key saved successfully!';
 
   // ─── Scanner & AI ────────────────────────────────────────────────────────
   static const String scanStudyMaterial = 'Scan Study Material';

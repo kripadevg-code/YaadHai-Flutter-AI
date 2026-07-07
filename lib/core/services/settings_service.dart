@@ -1,22 +1,18 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Manages simple local user preferences (onboarding state, theme, etc.).
+/// The Gemini API key is NOT stored here — it lives in Supabase Secrets
+/// and is accessed server-side by the Edge Functions.
 class SettingsService {
-  final SharedPreferences _prefs;
-  static const String _apiKeyKey = 'gemini_api_key_pref';
-
   SettingsService(this._prefs);
 
-  static const String onboardedPreferenceKey = 'onboarded';
+  final SharedPreferences _prefs;
 
-  String get geminiApiKey => _prefs.getString(_apiKeyKey) ?? '';
+  static const String _onboardedKey = 'onboarded';
 
-  bool get hasCompletedOnboarding => _prefs.getBool(onboardedPreferenceKey) ?? false;
-
-  Future<void> setGeminiApiKey(String key) async {
-    await _prefs.setString(_apiKeyKey, key);
-  }
+  bool get hasCompletedOnboarding => _prefs.getBool(_onboardedKey) ?? false;
 
   Future<void> setOnboardingComplete() async {
-    await _prefs.setBool(onboardedPreferenceKey, true);
+    await _prefs.setBool(_onboardedKey, true);
   }
 }

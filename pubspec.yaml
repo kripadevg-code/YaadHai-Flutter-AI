@@ -1,0 +1,92 @@
+name: yaad_hai
+description: AI-powered Learning, Memory, and Mastery Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.7.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_bloc: ^9.1.1
+  bloc: ^9.0.0
+  equatable: ^2.0.7
+
+  # Dependency Injection
+  get_it: ^9.2.1
+
+  # Navigation
+  go_router: ^17.3.0
+
+  # Local Database
+  drift: ^2.23.1
+  sqlite3_flutter_libs: ^0.6.0+eol
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # Responsive UI
+  flutter_screenutil: ^5.9.3
+
+  # HTTP
+
+  # Utilities
+  shared_preferences: ^2.5.3
+  intl: ^0.20.2
+  uuid: ^4.5.1
+
+  # Fonts
+  google_fonts: ^8.1.0
+
+  # UI Extras
+  cupertino_icons: ^1.0.8
+  fl_chart: ^1.2.0
+  percent_indicator: ^4.2.4
+
+  # ── AI & Scanner (Phase 2) ──────────────────────────────────────────────────
+  # Gemini AI SDK
+
+  # Camera & Image Picker
+  camera: ^0.11.0+2
+  image_picker: ^1.1.2
+
+  # Image Processing (preprocessing for OCR)
+  image: ^4.3.0
+
+  # On-device OCR (ML Kit — offline fallback)
+  google_mlkit_text_recognition: ^0.15.1
+
+  # Permissions
+  permission_handler: ^12.0.3
+  # NOTE: google_generative_ai removed — Gemini runs server-side in Supabase Edge Functions.
+
+  # Auth
+  supabase_flutter: ^2.9.0
+  google_sign_in: ^6.2.2
+
+  # Config
+  flutter_dotenv: ^5.2.1
+  font_awesome_flutter: ^11.0.0
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  screenshot: ^3.0.0
+  share_plus: ^13.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.15
+  drift_dev: ^2.23.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/

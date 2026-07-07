@@ -1,0 +1,110 @@
+# ─── Secrets ─────────────────────────────────────────────────────────────────
+.env
+# .env.example is safe to commit (no real secrets)
+
+# ─── OS junk ─────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Editor / IDE ─────────────────────────────────────────────────────────────
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+.history/
+.atom/
+
+# ─── Flutter / Dart / Pub ────────────────────────────────────────────────────
+# Dart tool cache (build_runner artifacts, package graph, etc.)
+.dart_tool/
+
+# Pub package cache
+.pub-cache/
+.pub/
+
+# Flutter generated plugin lists (regenerated on flutter pub get)
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Build outputs
+/build/
+**/doc/api/
+
+# Dart code coverage
+/coverage/
+
+# Generated files (keep .g.dart in version control only if you choose to;
+# most teams do NOT commit generated code and regenerate it in CI)
+# Uncomment the next line to exclude generated Dart files:
+# **/*.g.dart
+# **/*.freezed.dart
+# **/*.mocks.dart
+
+# ─── Android ─────────────────────────────────────────────────────────────────
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/captures/
+# Gradle wrapper is usually committed; only ignore the build dirs
+**/android/.externalNativeBuild/
+**/android/app/.cxx/
+
+# ─── iOS / macOS ─────────────────────────────────────────────────────────────
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/.last_build_id
+macos/Pods/
+macos/.symlinks/
+# Xcode derived data
+**/DerivedData/
+**/xcuserdata/
+*.xcworkspace
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+
+# ─── Fastlane ────────────────────────────────────────────────────────────────
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# ─── Obfuscation / Symbolication ─────────────────────────────────────────────
+app.*.symbols
+app.*.map.json
+
+# ─── Crash / Test logs ───────────────────────────────────────────────────────
+*.log
+
+# ─── FVM (Flutter Version Manager) ───────────────────────────────────────────
+# .fvmrc should be committed so all devs use the same Flutter version
+# .fvm/ contains cached Flutter SDK versions — do NOT commit
+.fvm/
+
+# ─── Supabase ────────────────────────────────────────────────────────────────
+# Ignore local Supabase config if it contains secrets
+# supabase/.temp/ is ephemeral
+supabase/.temp/
+
+# ─── Misc ────────────────────────────────────────────────────────────────────
+*.class
+*.pyc
+*.svn/
+migrate_working_dir/
+.ai/
+.agents/
+.cursor/

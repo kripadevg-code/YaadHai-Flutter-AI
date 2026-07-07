@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:yaad_hai/core/database/app_database.dart';
@@ -23,6 +24,7 @@ import 'package:yaad_hai/modules/scan_history/bloc/scan_history_bloc.dart';
 import 'package:yaad_hai/modules/scan_history/repos/scan_history_repo.dart';
 import 'package:yaad_hai/modules/subjects/bloc/subjects_bloc.dart';
 import 'package:yaad_hai/modules/subjects/repos/subjects_repo.dart';
+import 'package:yaad_hai/shared/components/app_scaffold.dart';
 import 'package:yaad_hai/modules/subjects/subjects_page.dart';
 import 'package:yaad_hai/shared/components/premium_card.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
@@ -111,11 +113,11 @@ class _HomeScaffoldState extends State<_HomeScaffold> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
-      extendBody: false,
+    return AppScaffold(
+      safeAreaTop: false, // Let the inner tabs handle their own safe areas
+      safeAreaBottom: false,
+      scrollable: false,
+      systemOverlayStyleOverride: SystemUiOverlayStyle.light, // Home tab has a dark gradient at top
       body: TabBarView(
         controller: _tabController,
         children: [

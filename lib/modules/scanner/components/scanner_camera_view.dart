@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
 import 'package:yaad_hai/shared/resources/app_strings.dart';
 import 'package:yaad_hai/shared/resources/app_styles.dart';
@@ -31,26 +32,32 @@ class ScannerCameraView extends StatelessWidget {
   Widget build(BuildContext context) {
     final EdgeInsets safePadding = MediaQuery.paddingOf(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.homeInk,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (isInitialized && controller != null)
-            _CameraPreview(controller: controller!)
-          else
-            _CameraUnavailable(onRetry: onRetry, onGallery: onPickGallery),
-          _CameraTopBar(topPadding: safePadding.top, pageCount: pageCount, onClose: onClose),
-          if (isInitialized && controller != null) const _DocumentGuide(),
-          if (isInitialized && controller != null)
-            _CameraControls(
-              bottomPadding: safePadding.bottom,
-              onCapture: onCapture,
-              onGallery: onPickGallery,
-              pageCount: pageCount,
-              onPreview: onPreview,
-            ),
-        ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: AppColors.homeInk, // Match background color
+        systemNavigationBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.homeInk,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (isInitialized && controller != null)
+              _CameraPreview(controller: controller!)
+            else
+              _CameraUnavailable(onRetry: onRetry, onGallery: onPickGallery),
+            _CameraTopBar(topPadding: safePadding.top, pageCount: pageCount, onClose: onClose),
+            if (isInitialized && controller != null) const _DocumentGuide(),
+            if (isInitialized && controller != null)
+              _CameraControls(
+                bottomPadding: safePadding.bottom,
+                onCapture: onCapture,
+                onGallery: onPickGallery,
+                pageCount: pageCount,
+                onPreview: onPreview,
+              ),
+          ],
+        ),
       ),
     );
   }

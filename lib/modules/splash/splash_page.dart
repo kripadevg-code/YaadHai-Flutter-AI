@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yaad_hai/core/di/dependencies.dart';
 import 'package:yaad_hai/core/router/app_navigator.dart';
+import 'package:yaad_hai/shared/components/app_scaffold.dart';
 import 'package:yaad_hai/modules/splash/bloc/splash_bloc.dart';
 import 'package:yaad_hai/modules/splash/models/splash_destination.dart';
 import 'package:yaad_hai/modules/splash/repos/splash_repo.dart';
@@ -44,7 +46,12 @@ class _SplashView extends StatelessWidget {
           _navigate(context, state.destination!);
         }
       },
-      child: Scaffold(
+      child: AppScaffold(
+        safeAreaTop: false,
+        safeAreaBottom: false,
+        scrollable: false,
+        backgroundColor: Colors.transparent,
+        systemOverlayStyleOverride: SystemUiOverlayStyle.light,
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

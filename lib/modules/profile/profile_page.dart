@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yaad_hai/core/di/dependencies.dart';
 import 'package:yaad_hai/core/router/app_navigator.dart';
 import 'package:yaad_hai/modules/profile/bloc/profile_bloc.dart';
 import 'package:yaad_hai/modules/profile/models/profile_user_data.dart';
 import 'package:yaad_hai/modules/profile/repos/profile_repo.dart';
+import 'package:yaad_hai/shared/components/app_scaffold.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
 import 'package:yaad_hai/shared/resources/app_strings.dart';
 import 'package:yaad_hai/shared/resources/app_styles.dart';
@@ -35,20 +37,16 @@ class _ProfileView extends StatelessWidget {
       },
       builder: (context, state) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Scaffold(
-          backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
-          body: CustomScrollView(
-            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-            slivers: [
-              _ProfileAppBar(isDark: isDark),
-              if (state.isLoading)
-                SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2)))
-              else if (state.isReady && state.userData != null)
-                _ProfileContent(userData: state.userData!, isDark: isDark)
-              else if (state.status == ProfileStatus.error)
-                SliverFillRemaining(child: _ProfileError(onRetry: () => context.read<ProfileBloc>().add(const ProfileEventLoad()))),
-            ],
-          ),
+        return AppScaffold(
+          slivers: [
+            _ProfileAppBar(isDark: isDark),
+            if (state.isLoading)
+              SliverFillRemaining(child: Center(child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2)))
+            else if (state.isReady && state.userData != null)
+              _ProfileContent(userData: state.userData!, isDark: isDark)
+            else if (state.status == ProfileStatus.error)
+              SliverFillRemaining(child: _ProfileError(onRetry: () => context.read<ProfileBloc>().add(const ProfileEventLoad()))),
+          ],
         );
       },
     );
@@ -68,6 +66,7 @@ class _ProfileAppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       backgroundColor: AppColors.primary,
+      systemOverlayStyle: SystemUiOverlayStyle.light, // Light icons for primary colored background
       leading: IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white), onPressed: () => AppNavigator.pop(context)),
       flexibleSpace: FlexibleSpaceBar(background: _ProfileHeroBanner(isDark: isDark)),
     );

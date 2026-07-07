@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yaad_hai/core/di/dependencies.dart';
 import 'package:yaad_hai/core/router/app_navigator.dart';
 import 'package:yaad_hai/modules/login/bloc/login_bloc.dart';
 import 'package:yaad_hai/modules/login/repos/login_repo.dart';
+import 'package:yaad_hai/shared/components/app_scaffold.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
 import 'package:yaad_hai/shared/resources/app_strings.dart';
 import 'package:yaad_hai/shared/resources/app_styles.dart';
@@ -44,7 +46,12 @@ class _LoginView extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return Scaffold(
+        return AppScaffold(
+          safeAreaTop: false,
+          safeAreaBottom: false,
+          scrollable: false,
+          backgroundColor: Colors.transparent,
+          systemOverlayStyleOverride: SystemUiOverlayStyle.light,
           body: Stack(
             fit: StackFit.expand,
             children: [

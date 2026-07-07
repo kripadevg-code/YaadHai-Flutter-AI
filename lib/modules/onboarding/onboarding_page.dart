@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yaad_hai/core/di/dependencies.dart';
 import 'package:yaad_hai/core/router/app_navigator.dart';
@@ -70,38 +71,44 @@ class _OnboardingView extends StatelessWidget {
         final isLast = state.currentPage == _pages.length - 1;
         final data = _pages[state.currentPage];
 
-        return Scaffold(
-          backgroundColor: AppColors.grey50,
-          body: SafeArea(
-            child: Column(
-              children: [
-                _OnboardingTopBar(onSkip: () => _finish(context)),
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    transitionBuilder: (child, animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: ScaleTransition(
-                          scale: Tween<double>(
-                            begin: 0.95,
-                            end: 1.0,
-                          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutBack)),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: _OnboardingStep(key: ValueKey(state.currentPage), data: data),
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: AppColors.grey50, // Match background color
+            systemNavigationBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: AppColors.grey50,
+            body: SafeArea(
+              child: Column(
+                children: [
+                  _OnboardingTopBar(onSkip: () => _finish(context)),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      transitionBuilder: (child, animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: ScaleTransition(
+                            scale: Tween<double>(
+                              begin: 0.95,
+                              end: 1.0,
+                            ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutBack)),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: _OnboardingStep(key: ValueKey(state.currentPage), data: data),
+                    ),
                   ),
-                ),
-                _OnboardingBottom(
-                  pageCount: _pages.length,
-                  currentPage: state.currentPage,
-                  isLast: isLast,
-                  gradientColors: data.gradientColors,
-                  onNext: () => _next(context, state.currentPage),
-                ),
-              ],
+                  _OnboardingBottom(
+                    pageCount: _pages.length,
+                    currentPage: state.currentPage,
+                    isLast: isLast,
+                    gradientColors: data.gradientColors,
+                    onNext: () => _next(context, state.currentPage),
+                  ),
+                ],
+              ),
             ),
           ),
         );

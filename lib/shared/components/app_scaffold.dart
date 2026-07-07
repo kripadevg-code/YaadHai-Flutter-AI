@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
 import 'package:yaad_hai/shared/resources/app_styles.dart';
 import 'package:yaad_hai/shared/resources/dimens.dart';
@@ -24,6 +25,10 @@ class AppScaffold extends StatelessWidget {
     this.floatingActionButtonLocation,
     this.safeAreaTop = true,
     this.safeAreaBottom = false,
+    this.backgroundColor,
+    this.systemOverlayStyleOverride,
+    this.extendBodyBehindAppBar = false,
+    this.scrollable = true,
   });
 
   final List<Widget> slivers;
@@ -39,6 +44,10 @@ class AppScaffold extends StatelessWidget {
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final bool safeAreaTop;
   final bool safeAreaBottom;
+  final Color? backgroundColor;
+  final SystemUiOverlayStyle? systemOverlayStyleOverride;
+  final bool extendBodyBehindAppBar;
+  final bool scrollable;
 
   @override
   Widget build(BuildContext context) {
@@ -48,69 +57,75 @@ class AppScaffold extends StatelessWidget {
     Widget mainContent;
 
     if (body != null) {
-      mainContent = NestedScrollView(
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            // ── Sliver App Bar ───────────────────────────────────────────────
-            if (title != null)
-              SliverAppBar(
-                expandedHeight: expandedHeaderHeight ?? 110.0,
-                pinned: true,
-                elevation: 0,
-                scrolledUnderElevation: 0,
-                backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
-                automaticallyImplyLeading: false,
-                leading:
-                    canPop
-                        ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isDark ? AppColors.grey800 : AppColors.grey100,
-                                borderRadius: BorderRadius.circular(Dimens.r10),
-                              ),
-                              child: Icon(
-                                Icons.arrow_back_rounded,
-                                color: isDark ? AppColors.white : AppColors.grey700,
-                                size: Dimens.icon20,
+      if (scrollable) {
+        mainContent = NestedScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              // ── Sliver App Bar ───────────────────────────────────────────────
+              if (title != null)
+                SliverAppBar(
+                  expandedHeight: expandedHeaderHeight ?? 110.0,
+                  pinned: true,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
+                  systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+                  automaticallyImplyLeading: false,
+                  leading:
+                      canPop
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isDark ? AppColors.grey800 : AppColors.grey100,
+                                  borderRadius: BorderRadius.circular(Dimens.r10),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_back_rounded,
+                                  color: isDark ? AppColors.white : AppColors.grey700,
+                                  size: Dimens.icon20,
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                        : null,
-                actions: actions,
-                flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: EdgeInsets.only(left: canPop ? 56.0 : 20.0, bottom: 12.0),
-                  title: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        title!,
-                        style: AppStyles.heading4.copyWith(
-                          color: isDark ? AppColors.white : AppColors.grey900,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      if (subtitle != null)
+                          )
+                          : null,
+                  actions: actions,
+                  flexibleSpace: FlexibleSpaceBar(
+                    titlePadding: EdgeInsets.only(left: canPop ? 56.0 : 20.0, bottom: 12.0),
+                    title: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
                         Text(
-                          subtitle!,
-                          style: AppStyles.bodySmall.copyWith(color: isDark ? AppColors.grey400 : AppColors.grey500, fontSize: 10.0),
+                          title!,
+                          style: AppStyles.heading4.copyWith(
+                            color: isDark ? AppColors.white : AppColors.grey900,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16.0,
+                          ),
                         ),
-                    ],
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            style: AppStyles.bodySmall.copyWith(color: isDark ? AppColors.grey400 : AppColors.grey500, fontSize: 10.0),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ...slivers,
-          ];
-        },
-        body: body!,
-      );
+              ...slivers,
+            ];
+          },
+          body: body!,
+        );
+      } else {
+        // Non-scrollable body (e.g. for login or splash screens)
+        mainContent = body!;
+      }
     } else {
       mainContent = CustomScrollView(
         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -123,6 +138,7 @@ class AppScaffold extends StatelessWidget {
               elevation: 0,
               scrolledUnderElevation: 0,
               backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
+              systemOverlayStyle: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
               automaticallyImplyLeading: false,
               leading:
                   canPop
@@ -180,13 +196,21 @@ class AppScaffold extends StatelessWidget {
       mainContent = Column(children: [topHeader!, Expanded(child: mainContent)]);
     }
 
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.grey50,
-      extendBody: false,
-      body: SafeArea(child: mainContent),
-      bottomNavigationBar: bottomNavigationBar,
-      floatingActionButton: floatingActionButton,
-      floatingActionButtonLocation: floatingActionButtonLocation,
+    // Get proper status bar style based on theme
+    final systemOverlayStyle = systemOverlayStyleOverride ?? (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark);
+    final scaffoldBackgroundColor = backgroundColor ?? (isDark ? AppColors.darkBackground : AppColors.grey50);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemOverlayStyle.copyWith(statusBarColor: scaffoldBackgroundColor, systemNavigationBarColor: Colors.transparent),
+      child: Scaffold(
+        backgroundColor: scaffoldBackgroundColor,
+        extendBody: false,
+        extendBodyBehindAppBar: extendBodyBehindAppBar,
+        body: SafeArea(top: safeAreaTop, bottom: safeAreaBottom, child: mainContent),
+        bottomNavigationBar: bottomNavigationBar,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
+      ),
     );
   }
 }

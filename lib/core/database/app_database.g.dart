@@ -818,6 +818,17 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _isBookmarkedMeta = const VerificationMeta('isBookmarked');
+  @override
+  late final GeneratedColumn<bool> isBookmarked = GeneratedColumn<bool>(
+    'is_bookmarked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_bookmarked" IN (0, 1))'),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -829,6 +840,7 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
     isCompleted,
     lastStudiedAt,
     createdAt,
+    isBookmarked,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -874,6 +886,9 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('is_bookmarked')) {
+      context.handle(_isBookmarkedMeta, isBookmarked.isAcceptableOrUnknown(data['is_bookmarked']!, _isBookmarkedMeta));
+    }
     return context;
   }
 
@@ -892,6 +907,7 @@ class $ChaptersTable extends Chapters with TableInfo<$ChaptersTable, Chapter> {
       isCompleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_completed'])!,
       lastStudiedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}last_studied_at']),
       createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      isBookmarked: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_bookmarked']) ?? false,
     );
   }
 
@@ -911,6 +927,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
   final bool isCompleted;
   final DateTime? lastStudiedAt;
   final DateTime createdAt;
+  final bool isBookmarked;
   const Chapter({
     required this.id,
     required this.subjectId,
@@ -921,6 +938,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
     required this.isCompleted,
     this.lastStudiedAt,
     required this.createdAt,
+    this.isBookmarked = false,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -938,6 +956,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       map['last_studied_at'] = Variable<DateTime>(lastStudiedAt);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['is_bookmarked'] = Variable<bool>(isBookmarked);
     return map;
   }
 
@@ -952,6 +971,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       isCompleted: Value(isCompleted),
       lastStudiedAt: lastStudiedAt == null && nullToAbsent ? const Value.absent() : Value(lastStudiedAt),
       createdAt: Value(createdAt),
+      isBookmarked: Value(isBookmarked),
     );
   }
 
@@ -967,6 +987,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       lastStudiedAt: serializer.fromJson<DateTime?>(json['lastStudiedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      isBookmarked: serializer.fromJson<bool>(json['isBookmarked']),
     );
   }
   @override
@@ -982,6 +1003,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       'isCompleted': serializer.toJson<bool>(isCompleted),
       'lastStudiedAt': serializer.toJson<DateTime?>(lastStudiedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'isBookmarked': serializer.toJson<bool>(isBookmarked),
     };
   }
 
@@ -995,6 +1017,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
     bool? isCompleted,
     Value<DateTime?> lastStudiedAt = const Value.absent(),
     DateTime? createdAt,
+    bool? isBookmarked,
   }) => Chapter(
     id: id ?? this.id,
     subjectId: subjectId ?? this.subjectId,
@@ -1005,6 +1028,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
     isCompleted: isCompleted ?? this.isCompleted,
     lastStudiedAt: lastStudiedAt.present ? lastStudiedAt.value : this.lastStudiedAt,
     createdAt: createdAt ?? this.createdAt,
+    isBookmarked: isBookmarked ?? this.isBookmarked,
   );
   Chapter copyWithCompanion(ChaptersCompanion data) {
     return Chapter(
@@ -1017,6 +1041,7 @@ class Chapter extends DataClass implements Insertable<Chapter> {
       isCompleted: data.isCompleted.present ? data.isCompleted.value : this.isCompleted,
       lastStudiedAt: data.lastStudiedAt.present ? data.lastStudiedAt.value : this.lastStudiedAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      isBookmarked: data.isBookmarked.present ? data.isBookmarked.value : this.isBookmarked,
     );
   }
 
@@ -1031,13 +1056,15 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           ..write('masteryLevel: $masteryLevel, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('lastStudiedAt: $lastStudiedAt, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('isBookmarked: $isBookmarked')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, subjectId, title, description, orderIndex, masteryLevel, isCompleted, lastStudiedAt, createdAt);
+  int get hashCode =>
+      Object.hash(id, subjectId, title, description, orderIndex, masteryLevel, isCompleted, lastStudiedAt, createdAt, isBookmarked);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1050,7 +1077,8 @@ class Chapter extends DataClass implements Insertable<Chapter> {
           other.masteryLevel == this.masteryLevel &&
           other.isCompleted == this.isCompleted &&
           other.lastStudiedAt == this.lastStudiedAt &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.isBookmarked == this.isBookmarked);
 }
 
 class ChaptersCompanion extends UpdateCompanion<Chapter> {
@@ -1063,6 +1091,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
   final Value<bool> isCompleted;
   final Value<DateTime?> lastStudiedAt;
   final Value<DateTime> createdAt;
+  final Value<bool> isBookmarked;
   final Value<int> rowid;
   const ChaptersCompanion({
     this.id = const Value.absent(),
@@ -1074,6 +1103,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     this.isCompleted = const Value.absent(),
     this.lastStudiedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.isBookmarked = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ChaptersCompanion.insert({
@@ -1086,6 +1116,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     this.isCompleted = const Value.absent(),
     this.lastStudiedAt = const Value.absent(),
     required DateTime createdAt,
+    this.isBookmarked = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        subjectId = Value(subjectId),
@@ -1101,6 +1132,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     Expression<bool>? isCompleted,
     Expression<DateTime>? lastStudiedAt,
     Expression<DateTime>? createdAt,
+    Expression<bool>? isBookmarked,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1113,6 +1145,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       if (isCompleted != null) 'is_completed': isCompleted,
       if (lastStudiedAt != null) 'last_studied_at': lastStudiedAt,
       if (createdAt != null) 'created_at': createdAt,
+      if (isBookmarked != null) 'is_bookmarked': isBookmarked,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1127,6 +1160,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     Value<bool>? isCompleted,
     Value<DateTime?>? lastStudiedAt,
     Value<DateTime>? createdAt,
+    Value<bool>? isBookmarked,
     Value<int>? rowid,
   }) {
     return ChaptersCompanion(
@@ -1139,6 +1173,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
       isCompleted: isCompleted ?? this.isCompleted,
       lastStudiedAt: lastStudiedAt ?? this.lastStudiedAt,
       createdAt: createdAt ?? this.createdAt,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1173,6 +1208,9 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (isBookmarked.present) {
+      map['is_bookmarked'] = Variable<bool>(isBookmarked.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1191,6 +1229,7 @@ class ChaptersCompanion extends UpdateCompanion<Chapter> {
           ..write('isCompleted: $isCompleted, ')
           ..write('lastStudiedAt: $lastStudiedAt, ')
           ..write('createdAt: $createdAt, ')
+          ..write('isBookmarked: $isBookmarked, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

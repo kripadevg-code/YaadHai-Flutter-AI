@@ -222,9 +222,9 @@ class _ScannerResultScaffold extends StatelessWidget {
       },
       child:
           resultState.isLoading
-              ? Scaffold(backgroundColor: theme.scaffoldBackgroundColor, body: const Center(child: CircularProgressIndicator()))
+              ? AppScaffold(title: AppStrings.scanStudyMaterial, body: const Center(child: CircularProgressIndicator()))
               : !hasAiPack
-              ? Scaffold(backgroundColor: theme.scaffoldBackgroundColor, body: TextOnlyView(text: scannerState.extractedText))
+              ? AppScaffold(title: AppStrings.studyPackReady, body: TextOnlyView(text: scannerState.extractedText))
               : AppScaffold(
                 title: AppStrings.studyPackReady,
                 actions: [

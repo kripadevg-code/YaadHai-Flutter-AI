@@ -61,12 +61,9 @@ class ChaptersRepoImpl implements ChaptersRepo {
 
   @override
   Future<void> toggleBookmark(String id, bool isBookmarked) async {
-    // TODO: Uncomment once build_runner regenerates the schema with isBookmarked column
-    // final chapter = await _db.getChapterById(id);
-    // if (chapter == null) return;
-    // await _db.upsertChapter(
-    //   chapter.toCompanion(true).copyWith(isBookmarked: Value(isBookmarked)),
-    // );
+    final chapter = await _db.getChapterById(id);
+    if (chapter == null) return;
+    await _db.upsertChapter(chapter.toCompanion(true).copyWith(isBookmarked: Value(isBookmarked)));
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:yaad_hai/shared/resources/app_colors.dart';
 import 'package:yaad_hai/shared/resources/app_strings.dart';
 import 'package:yaad_hai/shared/resources/app_styles.dart';
@@ -66,94 +67,99 @@ class _ScannerPreviewViewState extends State<ScannerPreviewView> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _TopBar(current: activeIndex + 1, total: widget.capturedPages.length, onClose: widget.onClose),
-            SizedBox(height: Dimens.h10),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: Dimens.w20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Dimens.r24),
-                    border: Border.all(color: isDark ? AppColors.white.withValues(alpha: 0.1) : AppColors.grey200, width: 1.5),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(22.0),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        ColoredBox(color: isDark ? AppColors.darkSurface : AppColors.grey50),
-                        PageView.builder(
-                          controller: _pageController,
-                          itemCount: widget.capturedPages.length,
-                          onPageChanged: widget.onSelectIndex,
-                          itemBuilder: (context, index) {
-                            return InteractiveViewer(
-                              clipBehavior: Clip.none,
-                              maxScale: 4.0,
-                              minScale: 1.0,
-                              child: Image.file(
-                                widget.capturedPages[index],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            );
-                          },
-                        ),
-                        // Top gradient overlay
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: Dimens.h56,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  (isDark ? AppColors.darkSurface : AppColors.grey50).withValues(alpha: 0.55),
-                                  AppColors.transparent,
-                                ],
+    final systemOverlayStyle = isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemOverlayStyle.copyWith(statusBarColor: Colors.transparent, systemNavigationBarColor: Colors.transparent),
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _TopBar(current: activeIndex + 1, total: widget.capturedPages.length, onClose: widget.onClose),
+              SizedBox(height: Dimens.h10),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Dimens.w20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimens.r24),
+                      border: Border.all(color: isDark ? AppColors.white.withValues(alpha: 0.1) : AppColors.grey200, width: 1.5),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(22.0),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ColoredBox(color: isDark ? AppColors.darkSurface : AppColors.grey50),
+                          PageView.builder(
+                            controller: _pageController,
+                            itemCount: widget.capturedPages.length,
+                            onPageChanged: widget.onSelectIndex,
+                            itemBuilder: (context, index) {
+                              return InteractiveViewer(
+                                clipBehavior: Clip.none,
+                                maxScale: 4.0,
+                                minScale: 1.0,
+                                child: Image.file(
+                                  widget.capturedPages[index],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                              );
+                            },
+                          ),
+                          // Top gradient overlay
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: Dimens.h56,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    (isDark ? AppColors.darkSurface : AppColors.grey50).withValues(alpha: 0.55),
+                                    AppColors.transparent,
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          top: Dimens.h12,
-                          right: Dimens.w12,
-                          child: _DeleteChip(onRemove: () => widget.onRemovePage(activeIndex)),
-                        ),
-                        Positioned(top: Dimens.h12, left: Dimens.w12, child: _PageIndexLabel(index: activeIndex)),
-                      ],
+                          Positioned(
+                            top: Dimens.h12,
+                            right: Dimens.w12,
+                            child: _DeleteChip(onRemove: () => widget.onRemovePage(activeIndex)),
+                          ),
+                          Positioned(top: Dimens.h12, left: Dimens.w12, child: _PageIndexLabel(index: activeIndex)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: Dimens.h16),
-            _BottomControlPanel(
-              pages: widget.capturedPages,
-              activeIndex: activeIndex,
-              onSelectIndex: (index) {
-                widget.onSelectIndex(index);
-                _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-              },
-              onKeepTaking: widget.onKeepTaking,
-              onConfirm: () => widget.onConfirm(_generateInHindi),
-              isHindi: _generateInHindi,
-              onHindiToggle: (val) {
-                setState(() {
-                  _generateInHindi = val;
-                });
-              },
-            ),
-          ],
+              SizedBox(height: Dimens.h16),
+              _BottomControlPanel(
+                pages: widget.capturedPages,
+                activeIndex: activeIndex,
+                onSelectIndex: (index) {
+                  widget.onSelectIndex(index);
+                  _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                },
+                onKeepTaking: widget.onKeepTaking,
+                onConfirm: () => widget.onConfirm(_generateInHindi),
+                isHindi: _generateInHindi,
+                onHindiToggle: (val) {
+                  setState(() {
+                    _generateInHindi = val;
+                  });
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

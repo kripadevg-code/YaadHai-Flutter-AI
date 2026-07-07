@@ -11,7 +11,7 @@ import 'package:yaad_hai/core/theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
-  await Supabase.initialize(url: Env.supabaseUrl, anonKey: Env.supabaseAnonKey);
+  await Supabase.initialize(url: Env.supabaseUrl, publishableKey: Env.supabaseAnonKey);
   await setupDependencies();
   runApp(const YaadHaiApp());
 }
@@ -26,10 +26,10 @@ class YaadHaiApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder:
-          (_, __) => ListenableBuilder(
+          (_, _) => ListenableBuilder(
             listenable: locator<LanguageService>(),
             builder:
-                (_, __) => MaterialApp.router(
+                (_, _) => MaterialApp.router(
                   title: 'YaadHai — Jo Padho, YaadHai.',
                   debugShowCheckedModeBanner: false,
                   theme: AppTheme.light,
